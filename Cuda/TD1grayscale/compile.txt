@@ -1,0 +1,3 @@
+g++ -c grayscale.cpp -o grayscale.o -pthread
+g++ -o grayscale2  grayscale.o -pthread `pkg-config --libs opencv`
+

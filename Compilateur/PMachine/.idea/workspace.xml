@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="PMachine:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8fd17120-d07c-4b99-91ed-7f3db680d73a" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="testRunner" value="GRADLE" />
+    <option name="delegatedBuild" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>PRN</find>
+      <find>adresse</find>
+    </findStrings>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="123" />
+    <option name="y" value="34" />
+    <option name="width" value="1643" />
+    <option name="height" value="925" />
+  </component>
+  <component name="ProjectId" id="1TkkCC7k34LRcovtzGdoezYGr9J" />
+  <component name="PropertiesComponent">
+    <property name="$PROJECT_DIR$/src/PCode.g4::/auto-gen" value="false" />
+    <property name="$PROJECT_DIR$/src/PCode.g4::/gen-listener" value="true" />
+    <property name="$PROJECT_DIR$/src/PCode.g4::/gen-visitor" value="false" />
+    <property name="$PROJECT_DIR$/src/PCode.g4::/language" value="Java" />
+    <property name="$PROJECT_DIR$/src/PCode.g4::/output-dir" value="$PROJECT_DIR$/src" />
+    <property name="$PROJECT_DIR$/src/Pascal.g4::/auto-gen" value="false" />
+    <property name="$PROJECT_DIR$/src/Pascal.g4::/gen-listener" value="true" />
+    <property name="$PROJECT_DIR$/src/Pascal.g4::/gen-visitor" value="false" />
+    <property name="$PROJECT_DIR$/src/Pascal.g4::/language" value="Java" />
+    <property name="$PROJECT_DIR$/src/Pascal.g4::/output-dir" value="$PROJECT_DIR$/src" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1557482242517" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../M2/AAR/Tuto/aar2_exemples/javaEEexamples" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="PMachine" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8fd17120-d07c-4b99-91ed-7f3db680d73a" name="Default Changelist" comment="" />
+      <created>1550187143076</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1550187143076</updated>
+      <workItem from="1550187147027" duration="11516000" />
+      <workItem from="1551086909153" duration="5985000" />
+      <workItem from="1551448857414" duration="698000" />
+      <workItem from="1551453404429" duration="621000" />
+      <workItem from="1551454064371" duration="7071000" />
+      <workItem from="1551691162400" duration="7272000" />
+      <workItem from="1551701297989" duration="876000" />
+      <workItem from="1551808033903" duration="3478000" />
+      <workItem from="1551906132153" duration="44000" />
+      <workItem from="1552296667536" duration="4716000" />
+      <workItem from="1552311101992" duration="4281000" />
+      <workItem from="1552641613283" duration="17000" />
+      <workItem from="1552653856918" duration="6550000" />
+      <workItem from="1552663480331" duration="4257000" />
+      <workItem from="1552901671055" duration="5605000" />
+      <workItem from="1552924256205" duration="1190000" />
+      <workItem from="1553017996254" duration="841000" />
+      <workItem from="1553171968986" duration="10000" />
+      <workItem from="1553505194104" duration="4699000" />
+      <workItem from="1553613586759" duration="2000" />
+      <workItem from="1553616535739" duration="9000" />
+      <workItem from="1553851138838" duration="27000" />
+      <workItem from="1556197350298" duration="9729000" />
+      <workItem from="1556610082594" duration="49000" />
+      <workItem from="1556622845204" duration="2000" />
+      <workItem from="1556802923985" duration="3920000" />
+      <workItem from="1556892281915" duration="63000" />
+      <workItem from="1557005445670" duration="3000" />
+      <workItem from="1557140282421" duration="2634000" />
+      <workItem from="1557478120033" duration="1143000" />
+      <workItem from="1557479652047" duration="2610000" />
+      <workItem from="1557489192717" duration="2325000" />
+      <workItem from="1557684999577" duration="76000" />
+      <workItem from="1557685111627" duration="2999000" />
+      <workItem from="1561630896868" duration="22000" />
+      <workItem from="1568210090137" duration="716000" />
+      <workItem from="1574011353237" duration="38000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.pas" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <last-edited>PMachine:jar</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>PMachine</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>antlr-4.7.2-complete</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

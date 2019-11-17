@@ -1,0 +1,5 @@
+LDI 2
+LDI 6
+ADD
+PRN
+HLT

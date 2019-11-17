@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PMachine:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PMachine_jar</output-path>
+    <root id="archive" name="PMachine.jar">
+      <element id="module-output" name="PMachine" />
+      <element id="extracted-dir" path="$USER_HOME$/lib/antlr-4.7.2-complete.jar" path-in-jar="/" />
+      <element id="module-source" name="PMachine" />
+      <element id="library" level="project" name="antlr-4.7.2-complete" />
+    </root>
+  </artifact>
+</component>
