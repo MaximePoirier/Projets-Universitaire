@@ -1,0 +1,4 @@
+#!/bin/sh
+for rezo in A B; do
+vdump $rezo | wireshark -o "gui.window_title:Netkit $rezo" -i - -k &
+done

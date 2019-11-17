@@ -1,0 +1,4 @@
+#!/bin/bash
+for rezo in A B C ab ac bc; do
+vdump $rezo | (exec -a "wireshark $rezo" wireshark -o "gui.window_title:Netkit $rezo" -i - -k) &
+done

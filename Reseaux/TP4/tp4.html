@@ -1,0 +1,450 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr"><head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<title>TP4 — Adressage et routage statique avec Netkit</title>
+<style type="text/css" media="all">
+#pied {
+    font-size: 80%;    
+    text-align: right;
+    font-style: italic;
+}
+
+.toc { 
+    font-size: 80%;
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    width: 15em;
+    background-color: #eee;
+    margin: 0px;
+    padding: 0px 
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}      
+
+.toc ul {
+    list-style-type: none;
+    padding: 0em 1em;
+}
+
+.toc ul ul {
+    font-size: 90%;
+}
+
+#tour {
+    display: inline-block;
+    text-align: justify;
+    width: 60em;
+    padding: 2em;
+}
+
+body {
+	font: normal 12pt sans-serif;
+    line-height: 1.3em;
+	text-align: left;
+	margin: 3em;
+	padding: 2em;
+}
+
+#header h2 {
+    font-weight: normal;
+    font-style: italic;
+}
+
+#body h2 {
+    margin-top: 2em;
+    padding-bottom: 0.25em;
+}
+
+
+#body h3 {
+    margin-top: 2em;
+    padding-bottom: 0.25em;
+}
+
+#body h1 {
+    border-bottom: 1px solid black;
+    padding-bottom: 0.25em;
+	margin-top: 2em;
+}
+
+a {
+    color: #ee7700;
+    font-weight: bold;
+	text-decoration: none;
+}
+
+.toc a {
+    color: black;
+}
+
+blockquote {
+	margin-left: 5em;
+	margin-top:2em;
+	font-style:italic;
+}
+
+hr {
+	margin-top:3em;
+}
+
+pre {
+    padding: 1em;
+    background-color: #fce4cc;
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}
+</style>
+<style type="text/css" media="print">
+body {
+    font-size: 10pt
+}
+.toc, #pied {
+    display: none;
+}
+</style>
+</head>
+<body>
+<div id="tour">
+<div id="header">
+<h1>TP4 — Adressage et routage statique avec Netkit</h1>
+<h2>L3 réseaux</h2>
+<h3>2 novembre 2015</h3>
+</div>
+<div id="corps">
+<div class="body" id="body">
+
+<h1>1. Introduction à Netkit</h1>
+
+<p>
+Netkit est un émulateur de réseau. Il permet d'effectuer facilement des 
+expérimentations réseau en déployant un ensemble de machines virtuelles 
+munies de cartes réseau type Ethernet reliées à des domaines de 
+diffusion virtuels assimilables à des <i>hubs</i>. La technologie utilisée pour les machines virtuelles est <i>user mode linux</i>
+ qui fonctionne sur la plupart des systèmes d'exploitation Linux 
+modernes. Vous trouverez les instructions pour installer Netkit sur 
+votre machine personnelle sur la <a href="http://celene.univ-orleans.fr/course/view.php?id=1980">page Celene du cours</a>.
+</p>
+<p>
+Lorsque vous travaillez avec Netkit, chaque machine virtuelle déployée 
+crée un fichier creux de 11Go dans le répertoire courant, d'extension <code>.disk</code>.
+ Aussi, il est fortement déconseillé d'utiliser Netkit depuis un système
+ de fichier partagé (en salle de TP hors salle réseau, travailler dans <code>/tmp</code>).
+</p>
+
+<h2>1.1. Commandes en v</h2>
+
+<p>
+L'interface bas niveau de Netkit permet de lancer/configurer/arrêter des
+ machines virtuelles l'une après l'autre pour créer un petit réseau de 
+machines ad hoc -- par exemple pour tester rapidement un protocole. Les 
+principales commandes sont les suivantes :
+</p>
+
+ <ul>
+ <li><b>vstart</b> permet de lancer une machine virtuelle équipée d'un 
+certain nombre de cartes réseau reliées à des domaines de collision 
+nommés (ils sont créés lors de leur première déclaration)
+
+<pre>$ vstart --eth0=hubA alice
+$ vstart --eth0=hubB bob
+$ vstart --eth0=hubA --eth1=hubB rt
+</pre>
+
+ </li>
+ <li><b>vlist</b> affiche la liste des machines virtuelles actives ainsi
+ que leurs interfaces réseau et les domaines de collision auxquels 
+celles-ci sont connectées :
+
+<pre>$ vlist
+</pre>
+
+ </li>
+ <li><b>vhalt</b> permet d'arrêter proprement une machine virtuelle, ce qui permet de la redémarrer plus tard :
+
+<pre>$ vhalt alice
+</pre>
+
+ </li>
+ <li><b>vcrash</b> permet d'arrêter brutalement une machine virtuelle, 
+plus rapide, typiquement utilisé pour stopper la machine virtuelle et la
+ détruire en effaçant son disque :
+
+<pre>$ vcrash -r bob
+</pre>
+
+ </li>
+ <li><b>vclean</b> permet de faire le ménage en cas de problème : nettoie les domaines de collisions, <i>etc</i>
+ </li>
+ </ul>
+
+<p>
+▶︎ <i>Il est temps de lancer votre première machine virtuelle grâce à la commande <code>vstart lux</code>. Un terminal apparaît : c'est la console de votre machine virtuelle <code>lux</code>. Une fois démarrée, vous êtes <code>root</code>. Testez quelques commandes (<code>dmesg</code>, <code>uname -a</code>, <code>hostname</code>, <code>id</code>, ...) Vérifiez que vous avez accès à votre répertoire utilisateur de la machine hôte via le répertoire <code>/hosthome</code> de la machine virtuelle. Observez un nouveau fichier sur la machine hôte : <code>lux.disk</code>. Arrêtez la machine virtuelle à l'aide de la commande <code>halt</code> dans sa console ou de la commande <code>vhalt lux</code> depuis la machine hôte. Comparer la taille (avec <code>ls -lh</code>) et l'occupation réelle (avec <code>du -h</code>) du fichier <code>lux.disk</code> avant de l'effacer.</i>
+</p>
+
+<h2>1.2. Commandes en l</h2>
+
+<p>
+L'interface haut niveau de Netkit permet de lancer/configurer/arrêter un
+ ensemble de machines virtuelles en bloc, à travers la notion de <i>lab</i>. Un réseau virtuel, ou <i>lab</i>, est un répertoire comportant un certain nombre de fichiers et sous-répertoires :
+</p>
+
+ <ul>
+ <li><code>lab.conf</code> est le fichier principal qui spécifie la 
+configuration générale des machines (quantité de mémoire, nombre de 
+consoles et de cartes réseau, <i>etc</i>) et la topologie du réseau ;
+ </li>
+ <li><code>lab.dep</code> est un fichier qui permet le démarrage des machines virtuelles en parallèle, il précise les dépendances ;
+ </li>
+ <li>pour chaque machine virtuelle <code>lapin</code>, un répertoire <code>lapin</code> apparaît dans le <i>lab</i>
+ : il contient les fichiers à ajouter à l'arborescence de la machine 
+virtuelle au premier démarrage de la machine (lorsque le fichier <code>lapin.disk</code> n'existe pas) ;
+ </li>
+ <li>pour chaque machine virtuelle <code>lapin</code>, le fichier <code>lapin.startup</code>, lorsqu'il existe, est un script shell qui sera exécuté au démarrage de la machine virtuelle ;
+ </li>
+ <li>pour chaque machine virtuelle <code>lapin</code>, le fichier <code>lapin.shutdown</code>, lorsqu'il existe, est un script shell qui sera exécuté à l'extinction de la machine virtuelle ;
+ </li>
+ <li>les répertoires <code>shared</code> et les fichiers <code>shared.startup</code> et <code>shared.shutdown</code>
+ permettent d'ajouter des fichiers et des commandes qui seront exécutées
+ sur l'ensemble des machines virtuelles (avant les commandes et fichiers
+ spécifiques à cette machine).
+ </li>
+ </ul>
+
+<p>
+Les commandes suivantes permettent de manipuler des <i>lab</i>. On les exécute en se plaçant dans le répertoire du <i>lab</i> ou en indiquant où il se trouve à l'aide du paramètre <code>-d</code>.
+</p>
+
+ <ul>
+ <li><b>linfo</b> permet d'obtenir des informations sur le <i>lab</i> et sa topologie (avec l'option <code>-m</code>) ;
+
+<pre>$ linfo -m /tmp/topo.ps
+$ xdg-open /tmp/topo.ps
+</pre>
+
+ </li>
+ <li><b>lstart</b> permet de démarrer le réseau virtuel (ou un sous-ensemble de machines passées en paramètres) :
+
+<pre>$ lstart
+</pre>
+
+ </li>
+ <li><b>lhalt</b> permet d'arrêter proprement l'ensemble des machines 
+virtuelles en conservant leurs disques (ou un sous-ensemble de machines 
+passées en paramètres) :
+
+<pre>$ lhalt alice bob
+</pre>
+
+ </li>
+ <li><b>lcrash</b> permet d'arrêter brutalement l'ensemble des machines 
+virtuelles et d'effacer leurs disques (ou un sous-ensemble de machines 
+passées en paramètres) :
+
+<pre>$ lcrash
+</pre>
+
+ </li>
+ <li><b>lclean</b> permet de nettoyer un <i>lab</i> en effaçant l'ensemble des fichiers temporaires (disques, logs, domaines de collision, <i>etc</i>).
+ </li>
+ </ul>
+
+<p>
+<b>Attention :</b> les modifications de fichiers opérées sur les machines virtuelles ne sont pas reportées dans le <i>lab</i>. C'est à vous de modifier le <i>lab</i> depuis la machine hôte et de relancer les machine virtuelles avec <code>lcrash</code> puis <code>lstart</code> pour prendre en compte les modifications ; ou bien de les modifier sur les machines virtuelles et de les recopier dans le <i>lab</i> à l'aide du répertoire spécial <code>/hostlab</code> qui permet aux machines virtuelles d'accéder au <i>lab</i> sur la machine hôte.
+</p>
+<p>
+<b>Attention :</b> avant d'archiver un <i>lab</i>, pensez à exécuter <code>lclean</code> pour le nettoyer des gigaoctets de disques virtuels inutiles !
+</p>
+<p>
+▶︎ <i>Prendre le temps de parcourir les pages de manuel suivantes (<code>man</code>) : <code>netkit</code>, <code>lab.conf</code>, <code>linfo</code>, <code>lstart</code> et <code>lcrash</code>.</i>
+</p>
+
+<h1>2. Un premier réseau virtuel</h1>
+
+<p>
+Il est temps de déployer votre premier réseau virtuel. Le <i>lab</i> <code>lab0</code> est constitué de deux machines virtuelles <code>alice</code> et <code>bob</code> reliées à un même domaine <code>rezo</code>.
+</p>
+<p>
+▶︎ <i>Téléchargez et extrayez <code>lab0.tar.gz</code> depuis Celene.</i>
+</p>
+
+<pre>$ tar xvzf ~/Downloads/lab0.tar.gz
+$ cd lab0
+</pre>
+
+<p>
+▶︎ <i>Étudiez le lab à l'aide de la commande <code>linfo</code> puis en étudiant les fichiers qu'il contient. Dessinez un plan d'adressage de ce réseau.</i>
+</p>
+
+<pre>$ linfo -m /tmp/topo.ps
+$ xdg-open /tmp/topo.ps
+$ ls
+$ cat lab.conf
+$ find alice bob shared
+$ cat shared/etc/hosts
+$ cat alice.startup
+</pre>
+
+<p>
+▶︎ <i>Démarrez le lab à l'aide de la commande <code>lstart</code>.</i>
+</p>
+
+<pre>$ lstart
+</pre>
+
+<p>
+▶︎ <i>Vérifiez à l'aide d'<code>ifconfig</code> que l'interface <code>eth0</code> d'Alice est bien configurée et démarrez <code>tcpdump</code> pour écouter le trafic réseau sur cette interface.</i>
+</p>
+
+<pre>alice# ifconfig eth0
+alice# tcpdump -i eth0 -n -v
+</pre>
+
+<p>
+▶︎ <i>Configurez l'interface <code>eth0</code> de <code>bob</code> à l'aide de la commande <code>ifconfig</code> (dont une utilisation typique est <code>ifconfig eth0 6.6.6.6/14</code>) et vérifiez que <code>bob</code> arrive à joindre <code>alice</code> à l'aide de la commande <code>ping</code>.</i>
+</p>
+
+<pre>bob# ifconfig eth0 ...
+bob# ping -c3 alice
+</pre>
+
+<p>
+Les paquets IP sont encapsulés dans des trames Ethernet. C'est le 
+protocole ARP qui permet d'effectuer la correspondance entre adresses IP
+ et adresses MAC.
+</p>
+<p>
+▶︎ <i>Analysez les trames ARP et les messages ICMP lues dans la sortie de <code>tcpdump</code> sur <code>alice</code> et représentez l'échange sur un chronogramme. À l'aide des commandes <code>ifconfig</code> et <code>arp</code> (dont vous lirez le manuel), identifiez les adresses MAC des cartes réseau et les correspondances connues par chaque machine.</i>
+</p>
+
+<pre>bob# arp -n
+bob# man ifconfig
+bob# man arp
+alice# arp
+</pre>
+
+<p>
+▶︎ <i>Arrêtez le lab à l'aide de la commande <code>lcrash</code>.</i>
+</p>
+
+<pre>$ lcrash
+</pre>
+
+<p>
+▶︎ <i>Créez un fichier <code>bob.startup</code> qui configure l'interface de <code>bob</code> au démarrage. Testez son fonctionnement en relançant le lab et en vérifiant qu'<code>alice</code> arrive à pinger <code>bob</code>.</i>
+</p>
+
+<pre>$ nano bob.startup
+$ lstart
+alice# ping -c3 bob
+$ lcrash
+</pre>
+
+<h1>3. Un premier routeur</h1>
+
+<p>
+Le <i>lab</i> <code>lab1</code> insère un routeur entre <code>alice</code> et <code>bob</code> qui sont maintenant reliées respectivement aux domaines de collision <code>A</code> et <code>B</code>.
+</p>
+<p>
+▶︎ <i>Téléchargez et extrayez <code>lab1.tar.gz</code> depuis Celene.</i>
+</p>
+<p>
+▶︎ <i>Étudiez le lab et dessinez un plan d'adressage de ce réseau avant de le démarrer avec <code>lstart</code>.</i>
+</p>
+<p>
+Le script shell <code>ecoute</code> place une sonde <code>wireshark</code> sur chacun des domaines de collision <code>A</code> et <code>B</code> pour vous aider à comprendre les échanges et à configurer les machines.
+</p>
+<p>
+▶︎ <i>Exécutez le script <code>ecoute</code>.</i>
+</p>
+
+<pre>$ ./ecoute
+</pre>
+
+<p>
+▶︎ <i>Configurez à l'aide d'<code>ifconfig</code> les interfaces <code>eth0</code> d'<code>alice</code> et <code>bob</code> et vérifiez qu'elles peuvent alors respectivement pinguer <code>rtA</code> et <code>rtB</code>. Observez les échanges ARP et ICMP dans wireshark sur chacun des réseaux.</i>
+</p>
+<p>
+La machine <code>rt</code> est un routeur : elle dispose d'une patte dans le réseau <code>A</code> et d'une patte dans le réseau <code>B</code> et elle est configurée pour relayer des paquets. Vous ne trouverez pas la commande dans <code>rt.startup</code>
+ car toutes les machines sont des routeurs par défaut dans Netkit, la 
+commande pour autoriser le relayage des paquets est la suivante :
+</p>
+
+<pre># echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+</pre>
+
+<p>
+La commande <code>route</code> permet d'afficher et de modifier le contenu de la table de routage d'une machine.
+</p>
+<p>
+▶︎ <i>Lisez la page de manuel de <code>route</code> puis consultez le contenu des tables pour <code>alice</code> et <code>bob</code>. Que se passe-t-il si <code>alice</code> essaie de pinguer <code>bob</code> ? (en utilisant son adresse si vous n'avez pas modifié <code>/etc/hosts</code>)</i>
+</p>
+
+<pre>alice# route -n
+bob# route -n
+alice# ping -c3 bob
+</pre>
+
+<p>
+▶︎ <i>Ajoutez une route par défaut sur <code>alice</code> pour traverser <code>rt</code> avec une commande du type <code>route add default gw ...</code>. Sur <code>bob</code> ajoutez une route spécifique pour joindre le réseau <code>A</code> avec une commande du type <code>route add -net ...</code>. Vérifiez qu'<code>alice</code> et <code>bob</code> peuvent alors se pinguer mutuellement et observez les échanges dans <code>wireshark</code> que vous reporterez sur un chronogramme.</i>
+</p>
+<p>
+La commande <code>traceroute</code> est un outil pour deviner le chemin probable emprunté par les paquets IP entre deux machines.
+</p>
+<p>
+▶︎ <i>Après avoir lu le manuel de <code>traceroute</code>, étudiez le résultat de la commande <code>traceroute</code> depuis <code>alice</code> vers <code>bob</code> et réciproquement.</i>
+</p>
+
+<pre>alice# traceroute bob
+bob# traceroute alice
+</pre>
+
+<p>
+▶︎ <i>Créez les fichiers <code>alice.startup</code> et <code>bob.startup</code> pour les configurer une fois pour toute. Modifiez <code>shared/etc/hosts</code> pour y ajouter <code>alice</code> et <code>bob</code>. Arrêtez et relancez le lab et vérifiez que la configuration fonctionne.</i>
+</p>
+<p>
+▶︎ <i>Modifiez <code>lab.conf</code> pour que <code>rt</code> dispose aussi d'une console au démarrage et profitez-en pour afficher sa table de routage et le contenu de sa table <code>arp</code> après qu'<code>alice</code> ait pingué <code>bob</code> avec succès.</i>
+</p>
+
+<h1>4. Routage statique</h1>
+
+<p>
+Disposant du bloc d'adresses <code>192.168.80.0/20</code>, on souhaite 
+le redécouper en 3 sous-réseaux pouvant accueillir chacun jusqu'à 1000 
+machines. Chaque sous-réseau comporte un routeur qui est relié à chacun 
+des deux autres par une liaison point à point. On simulera les liaisons 
+point à point par des domaines de collisions pour des réseaux en <code>/30</code> pris dans le bloc <code>172.16.0.0/12</code>.
+</p>
+<p>
+▶︎ <i>Proposez une architecture réseau et un plan d'adressage répondant à ces spécifications.</i>
+</p>
+<p>
+Le <i>lab</i> <code>lab2</code> propose un squelette pour mettre en œuvre ce réseau. Il comporte 6 machines : les 3 routeurs <code>rtA</code>, <code>rtB</code> et <code>rtC</code> ainsi qu'un poste de travail pour chacun des sous-réseaux <code>alice</code>, <code>bob</code> et <code>charlie</code>. Le script <code>ecoute</code> permet de placer une sonde sur chacun des 6 réseaux du <i>lab</i>.
+</p>
+<p>
+▶︎ <i>Configurez l'ensemble des machines avec <code>ifconfig</code> et <code>route</code> et mettre à jour le fichiers <code>hosts</code> pour répondre aux spécifications ci-dessus. Testez votre solution en vérifiant qu'<code>alice</code>, <code>bob</code> et <code>charlie</code> peuvent communiquer les uns avec les autres à l'aide de <code>ping</code>, <code>traceroute</code> mais aussi de <code>nc</code>. Observez les échanges dans <code>wireshark</code> et dessiner des chronogrammes correspondant.</i>
+</p>
+<p>
+▶︎ <i>Créez les fichiers de configurations nécessaire pour que votre solutions se configure toute seule avec la commande <code>lstart</code>. Modifiez <code>lab.conf</code> pour que les routeurs n'affichent plus de console. Relancez le lab pour vérifiez que tout fonctionne comme prévu.</i>
+</p>
+
+<pre>$ lstart
+alice# ping -c3 bob
+alice# ping -c3 charlie
+bob# traceroute charlie
+bob# nc -l -p 6666
+charlie# nc bob 6666
+</pre>
+
+</div>
+<!-- xhtml code generated by txt2tags 2.6. (http://txt2tags.org) -->
+<!-- cmdline: txt2tags tp4.t2t -->
+</div>
+<div id="pied">
+Dernière modification le 08 November 2015
+</div>
+</div>
+
+
+
+</body></html>

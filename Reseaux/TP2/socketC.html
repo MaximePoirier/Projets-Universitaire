@@ -1,0 +1,439 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr"><head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<title>Sockets en C</title>
+<style type="text/css" media="all">
+#pied {
+    font-size: 80%;    
+    text-align: right;
+    font-style: italic;
+}
+
+.toc { 
+    font-size: 80%;
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    width: 15em;
+    background-color: #eee;
+    margin: 0px;
+    padding: 0px 
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}      
+
+.toc ul {
+    list-style-type: none;
+    padding: 0em 1em;
+}
+
+.toc ul ul {
+    font-size: 90%;
+}
+
+#tour {
+    display: inline-block;
+    text-align: justify;
+    width: 60em;
+    padding: 2em;
+}
+
+body {
+	font: normal 12pt sans-serif;
+    line-height: 1.3em;
+	text-align: left;
+	margin: 3em;
+	padding: 2em;
+}
+
+#header h2 {
+    font-weight: normal;
+    font-style: italic;
+}
+
+#body h2 {
+    margin-top: 2em;
+    padding-bottom: 0.25em;
+}
+
+
+#body h3 {
+    margin-top: 2em;
+    padding-bottom: 0.25em;
+}
+
+#body h1 {
+    border-bottom: 1px solid black;
+    padding-bottom: 0.25em;
+	margin-top: 2em;
+}
+
+a {
+    color: #ee7700;
+    font-weight: bold;
+	text-decoration: none;
+}
+
+.toc a {
+    color: black;
+}
+
+blockquote {
+	margin-left: 5em;
+	margin-top:2em;
+	font-style:italic;
+}
+
+hr {
+	margin-top:3em;
+}
+
+pre {
+    padding: 1em;
+    background-color: #fce4cc;
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}
+</style>
+<style type="text/css" media="print">
+body {
+    font-size: 10pt
+}
+.toc, #pied {
+    display: none;
+}
+</style>
+</head>
+<body>
+<div id="tour">
+<div id="header">
+<h1>Sockets en C</h1>
+<h2>L3 réseaux</h2>
+<h3>5 octobre 2015</h3>
+</div>
+<div id="corps">
+<div class="body" id="body">
+<p>
+L'API socket, présente dans la norme POSIX, permet de généraliser aux 
+réseaux la notion abstraite de flux de données entre processus que 
+mettent en oeuvre les tubes (<code>pipe</code>, <code>mkfifo</code>). Une fois la communication établie entre deux processus distants, une <i>socket</i>
+ se comporte comme un tube bidirectionnel : chacun peut lire ou écrire 
+sur sa socket, les données arrivent, après acheminement, dans l'ordre 
+d'émission à l'autre extrémité. Les <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/socket.html">sockets</a> étant manipulées par le biais de descripteurs de fichier, toutes les opérations standard sur les fichiers s'appliquent (<code>read</code>, <code>write</code>, <code>close</code>, <code>select</code>, etc). Il est aussi possible de les manipuler à travers des fonctions dédiées (<a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/recv.html">recv</a>, <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/send.html">send</a>). L'établissement de la communication est asymétrique et orientée client/serveur.
+</p>
+
+<h3>Services distants : adressage, nommage</h3>
+
+<p>
+Un premier problème de la communication à distance consiste à nommer le partenaire avec lequel on souhaite communiquer par le <i>noeud</i> réseau où il se trouve et le <i>service</i> qu'il déploie. Typiquement, sur internet, les <i>sockets</i>
+ flux utilisent le protocole TCP sur un réseau IP : chaque noeud est 
+identifié par une adresse IP (qui peut être obtenue dans l'annuaire DNS à
+ partir d'un nom) et chaque service par un numéro de port TCP (qui peut 
+être obtenu dans l'annuaire des services à partir d'un nom). La 
+primitive <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/getaddrinfo.html">getaddrinfo</a> permet de rechercher l'ensemble des paramètres valides de <i>socket</i> correspondant à un noeud et un service donné (certains noms peuvent avoir plusieurs adresses associées). La primitive <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/getnameinfo.html">getnameinfo</a> permet d'associer un nom canonique de noeud et de service à des paramètres de <i>socket</i>.
+</p>
+<p>
+Le programme <code>gai</code> ci-dessous affiche l'ensemble des entrées 
+numériques correspondant au nom de noeud et au service passés en 
+paramètres pour les indications <code>ai_family=AF_INET</code> et <code>ai socktype=SOCK_STREAM</code> et nettoie derrière lui avec la primitive <code>freeaddrinfo</code>.
+</p>
+
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+int main(int argc, char *argv[])
+{
+	struct addrinfo hints, *res, *cur;
+	int err;
+	char host[NI_MAXHOST];
+	char serv[NI_MAXSERV];
+	
+	memset(&amp;hints,0,sizeof(hints));
+	hints.ai_family=AF_INET;
+	hints.ai_socktype=SOCK_STREAM;
+	if ((err=getaddrinfo(argv[1],argv[2],&amp;hints,&amp;res))) {
+		fprintf(stderr,"getaddrinfo: %s\n",gai_strerror(err));
+		return 1;
+	}
+	for (cur=res; cur!=NULL; cur=cur-&gt;ai_next) {
+		if ((err=getnameinfo(cur-&gt;ai_addr, cur-&gt;ai_addrlen, host, NI_MAXHOST, serv,
+                             NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV))) {
+			fprintf(stderr, "getnameinfo: %s\n", gai_strerror(err));
+			continue;
+		}
+		printf("host: %s port: %s\n", host, serv);
+	}
+	freeaddrinfo(res);
+	return 0;
+}
+</pre>
+
+<h3>Client</h3>
+
+<p>
+Une <i>socket</i> se crée grâce à la primitive <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/socket.html">socket</a> et se détruit avec la primitive <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/close.html">close</a>. Pour se connecter à un service, un client crée une <i>socket</i> puis la connecte avec la primitive <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/connect.html">connect</a>. Une fois connectée, les primitives standard de manipulation de descripteurs de fichiers sont utilisables (<a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/read.html">read</a>, <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/write.html">write</a>, <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/close.html">close</a>, <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/select.html">select</a>, etc).
+</p>
+<p>
+Le programme <code>gethttp</code> ci-dessous se connecte, à partir d'un 
+nom de noeud et de service passés en paramètre, à la première entrée 
+valide et récupère la page HTML racine en utilisant le protocole HTTP 
+version 1.0. Pour cela il suffit d'envoyer la chaîne <code>GET / HTTP/1.0\r\nHost: toto\r\n\r\n</code> où <code>toto</code> est remplacé par le nom du serveur interrogé puis de récupérer tout ce qu'envoie le serveur avant de fermer la connection.
+</p>
+
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+
+#define BUFLEN 512
+
+int main(int argc, char *argv[])
+{
+	struct addrinfo hints, *res, *cur;
+	int err, fd, n;
+	char *getroot = "GET / HTTP/1.0\r\nHost: %s\r\n\r\n", buf[BUFLEN];
+	
+	memset(&amp;hints,0,sizeof(hints));
+	hints.ai_family=AF_INET;
+	hints.ai_socktype=SOCK_STREAM;
+	if ((err=getaddrinfo(argv[1],argv[2],&amp;hints,&amp;res))) {
+		fprintf(stderr,"getaddrinfo: %s\n",gai_strerror(err));
+		return 1;
+	}
+	for (cur=res; cur!=NULL; cur=cur-&gt;ai_next) {
+		if ((fd=socket(cur-&gt;ai_family, cur-&gt;ai_socktype, cur-&gt;ai_protocol))==-1) {
+			perror("socket");
+			continue;
+		}
+		if (connect(fd, cur-&gt;ai_addr, cur-&gt;ai_addrlen)==0)
+			break;
+		perror("connect");
+	}
+	if (cur==NULL) {
+		fprintf(stderr,"getaddrinfo: empty list\n");
+		return 1;
+	}
+	freeaddrinfo(res);
+	sprintf(buf, getroot, argv[1]);
+	write(fd, buf, strlen(buf));
+	while ((n=read(fd, buf, BUFLEN))&gt;0)
+		write(STDOUT_FILENO,buf,n);
+	close(fd);
+	return 0;
+}
+</pre>
+
+<h3>Serveur</h3>
+
+<p>
+Côté serveur, il s'agit, une fois une <i>socket</i> de référence créée avec la primitive <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/socket.html">socket</a>, de réserver un service avec la primitive <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/bind.html">bind</a> et de créer une file d'attente pour les connections entrantes avec <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/listen.html">listen</a>. Une fois la file d'attente créée, chaque connexion entrante peut être acceptée en utilisant la primitive <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/accept.html">accept</a> sur la <i>socket</i> de référence. La primitive <code>accept</code> permet de récupérer une <i>socket</i>
+ associée à la connexion sur laquelle communiquer avec le client. Ainsi,
+ il est possible de gérer plusieurs connexions simultanées au même 
+service : une <i>socket</i> peut être vue comme un quadruplet formé des noeuds et services à chaque extrémité (même si le client n'appelle pas <code>bind</code> avant <code>connect</code>, le système lui attribue automatique un numéro de service libre pour lui permettre de recevoir les messages du serveur).
+</p>
+<p>
+Le programme <code>echod</code> ci-dessous attend des connections sur le
+ service passé en paramètre, lit une ligne envoyée par le client, lui 
+renvoie la même ligne et ferme la connection avant de passer à la 
+connection suivante. On pourra tester le serveur avec l'utilitaire <code>nc</code>.
+</p>
+
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+
+#define BUFLEN 1024
+
+int main(int argc, char *argv[])
+{
+	struct addrinfo hints, *res, *cur;
+	int err, fd, s, n;
+	socklen_t z=0;
+	char buf[BUFLEN];
+	
+	memset(&amp;hints,0,sizeof(hints));
+	hints.ai_family=AF_INET;
+	hints.ai_socktype=SOCK_STREAM;
+	hints.ai_flags=AI_PASSIVE;
+	if ((err=getaddrinfo(NULL,argv[1],&amp;hints,&amp;res))) {
+		fprintf(stderr,"getaddrinfo: %s\n",gai_strerror(err));
+		exit(1);
+	}
+	for (cur=res; cur!=NULL; cur=cur-&gt;ai_next) {
+		if ((fd=socket(cur-&gt;ai_family, cur-&gt;ai_socktype, cur-&gt;ai_protocol))==-1) {
+			perror("socket");
+			continue;
+		}
+		if (bind(fd, cur-&gt;ai_addr, cur-&gt;ai_addrlen)==0) break;
+		perror("bind");
+	}
+	if (cur==NULL) exit(1);
+	freeaddrinfo(res);
+	listen(fd, 5);
+	while (1) {
+		s=accept(fd, NULL, &amp;z);
+		n=read(s, buf, BUFLEN);
+		write(s, buf, n);
+		close(s);
+	}
+	return 0;
+}
+</pre>
+
+<h3>Multiplexage</h3>
+
+<p>
+Le programme <code>chatd</code> ci-dessous gère des connections 
+simultanées sur le port passé en paramètre et se comporte comme un 
+programme de chat. Lors de la connection, le serveur demande au client 
+de lui indiquer son login. Une fois le login enregistré, tout ligne 
+reçue de n'importe quel client (grâce à <a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/select.html">select</a>)
+ est répétée à tous les clients actuellement connectés précédée du login
+ du client émetteur. On pourra tester le serveur avec plusieurs 
+instances de l'utilitaire <code>nc</code>.
+</p>
+
+<pre>#include &lt;sys/types.h&gt;
+#include &lt;sys/select.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netdb.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+
+#define BUFLEN 1024
+#define MAXCLIENT 100
+
+int main(int argc, char *argv[])
+{
+	struct addrinfo hints, *res, *cur;
+	int err, fd, n, nb, max, i, j, k;
+	socklen_t z=0;
+	char buf[BUFLEN];
+	int client[MAXCLIENT];
+	char *login[MAXCLIENT];
+	char *str;
+	fd_set fds;
+	
+	
+	memset(&amp;hints,0,sizeof(hints));
+	hints.ai_family=AF_INET;
+	hints.ai_socktype=SOCK_STREAM;
+	hints.ai_flags=AI_PASSIVE;
+	if ((err=getaddrinfo(NULL,argv[1],&amp;hints,&amp;res))) {
+		fprintf(stderr,"getaddrinfo: %s\n",gai_strerror(err));
+		exit(1);
+	}
+	for (cur=res; cur!=NULL; cur=cur-&gt;ai_next) {
+		if ((fd=socket(cur-&gt;ai_family, cur-&gt;ai_socktype, cur-&gt;ai_protocol))==-1) {
+			perror("socket");
+			continue;
+		}
+		if (bind(fd, cur-&gt;ai_addr, cur-&gt;ai_addrlen)==0) break;
+		perror("bind");
+	}
+	if (cur==NULL) exit(1);
+	freeaddrinfo(res);
+	listen(fd, 5);
+	nb=0;
+	max=fd;
+	while (1) {
+		FD_ZERO(&amp;fds);
+		FD_SET(fd, &amp;fds);
+		for (i=0;i&lt;nb;i++)
+			FD_SET(client[i],&amp;fds);
+		n=select(max+1, &amp;fds, NULL, NULL, NULL);
+		if (FD_ISSET(fd, &amp;fds)) {
+			client[nb]=accept(fd, NULL, &amp;z);
+			max=client[nb]&gt;max?client[nb]:max;
+			login[nb]=NULL;
+			write(client[nb], "login: ", 7);
+			nb++;
+		}
+		for (i=0;i&lt;nb;i++)
+			if (FD_ISSET(client[i], &amp;fds)) {
+				n=read(client[i], buf, BUFLEN);
+				fflush(stdout);
+				if (n&gt;0) {
+					if (login[i]==NULL) {
+						buf[n-1]='\0';
+						fflush(stdout);
+						str=(char *)malloc(n);
+						memcpy(str,buf,n);
+						login[i]=str;
+					} else {
+						fflush(stdout);
+						k=strlen(login[i]);
+						str=malloc(n+k+2);
+						memcpy(str,login[i],k);
+						str[k]=':';
+						str[k+1]=' ';
+						memcpy(str+k+2,buf,n);
+						k=n+k+2;
+						for (j=0;j&lt;nb;j++)
+							if (i!=j)
+								write(client[j], str, k);
+						free(str);
+					}
+				} else {
+					close(client[i]);
+					free(login[i]);
+					login[i]=NULL;
+					nb--;
+					client[i]=client[nb];
+					login[i]=login[nb];
+				}
+			}
+	}
+	return 0;
+}
+</pre>
+
+<h3>Pour aller plus loin</h3>
+
+<p>
+Nous n'avons fait qu'effleurer l'API socket. Pour approfondir le sujet, il vous reste à découvrir entre autre :
+</p>
+
+<ul>
+<li>la gestion des paramètres des <i>sockets</i> avec les primitives <code>getsockopt</code> et <code>setsockopt</code> (en particulier le très utile <code>SO_REUSEADDR</code>) ;
+</li>
+<li>la problématique de codage compatible des données avec les primitives <code>htons</code>, <code>ntohs</code>, <code>htonl</code> et <code>ntohl</code> ;
+</li>
+<li>l'envoi de datagrammes avec les <i>sockets</i> de type <code>SOCK_DGRAM</code> et les primitives <code>sendto</code>, <code>recvfrom</code>.
+</li>
+</ul>
+
+<h1>Références</h1>
+
+<ul>
+<li><a href="http://www.opengroup.org/onlinepubs/9699919799/">POSIX 2008</a>
+</li>
+<li><a href="http://man.netbsd.org/">NetBSD Manual Pages</a>
+</li>
+</ul>
+
+</div>
+<!-- xhtml code generated by txt2tags 2.6. (http://txt2tags.org) -->
+<!-- cmdline: txt2tags socketC.t2t -->
+</div>
+<div id="pied">
+Dernière modification le 04 October 2015
+</div>
+</div>
+
+
+
+</body></html>

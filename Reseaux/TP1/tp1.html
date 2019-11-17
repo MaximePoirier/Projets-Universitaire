@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr"><head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<title>TP1 — Observation des protocoles applicatifs</title>
+<style type="text/css" media="all">
+#pied {
+    font-size: 80%;    
+    text-align: right;
+    font-style: italic;
+}
+
+.toc { 
+    font-size: 80%;
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    width: 15em;
+    background-color: #eee;
+    margin: 0px;
+    padding: 0px 
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}      
+
+.toc ul {
+    list-style-type: none;
+    padding: 0em 1em;
+}
+
+.toc ul ul {
+    font-size: 90%;
+}
+
+#tour {
+    display: inline-block;
+    text-align: justify;
+    width: 60em;
+    padding: 2em;
+}
+
+body {
+	font: normal 12pt sans-serif;
+    line-height: 1.3em;
+	text-align: left;
+	margin: 3em;
+	padding: 2em;
+}
+
+#header h2 {
+    font-weight: normal;
+    font-style: italic;
+}
+
+#body h3 {
+    margin-top: 3em;
+}
+
+#body h1 {
+    border-bottom: 1px solid black;
+    padding-bottom: 0.25em;
+	margin-top: 2em;
+}
+
+a {
+    color: #ee7700;
+    font-weight: bold;
+	text-decoration: none;
+}
+
+.toc a {
+    color: black;
+}
+
+blockquote {
+	margin-left: 5em;
+	margin-top:2em;
+	font-style:italic;
+}
+
+hr {
+	margin-top:3em;
+}
+
+pre {
+    padding: 1em;
+    background-color: #fce4cc;
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}
+</style>
+<style type="text/css" media="print">
+body {
+    font-size: 10pt
+}
+.toc, #pied {
+    display: none;
+}
+</style>
+</head>
+<body>
+<div id="tour">
+<div id="header">
+<h1>TP1 — Observation des protocoles applicatifs</h1>
+<h2>L3 réseaux</h2>
+<h3>21 septembre 2015</h3>
+</div>
+<div id="corps">
+<div class="toc">
+
+  <ul>
+  <li><a href="#toc1">Préparation</a>
+  </li>
+  <li><a href="#toc2">1. Réseau local</a>
+  </li>
+  <li><a href="#toc3">2. DNS, web et mail</a>
+  </li>
+  <li><a href="#toc4">3. Écouter le réseau</a>
+  </li>
+  <li><a href="#toc5">4. Communiquer avec les serveurs</a>
+  </li>
+  </ul>
+
+</div>
+<div class="body" id="body">
+
+<h1 id="toc1">Préparation</h1>
+
+<p>
+Dans ce TP nous utiliserons <b>Netkit</b>, un environnement de 
+simulation réseau qui permet de déployer des réseaux virtuels de 
+serveurs Linux reliés par des switchs. Des instructions détaillées pour 
+installer <b>Netkit</b> sont fournies sur la page Celene du cours. 
+Attention à bien réaliser l'installation et l'utilisation dans un 
+système de fichiers qui gère correctement les fichiers creux (<i>sparse</i>).
+</p>
+<p>
+Le réseau virtuel de ce TP est fourni déjà entièrement configuré sous la forme d'une archive <code>labobs.tar.gz</code>. Une fois l'archive extraite, se placer dans un terminal à l'intérieur du répertoire <code>labobs</code> et démarrer le réseau virtuel à l'aide de la commande <code>lstart</code>. Le démarrage peut être lent, 12 machines virtuelles sont créées et 2 consoles permettent d'interagir avec les machines <code>alice</code> et <code>bob</code>. En fin de session, pour éteindre les machines virtuelles, on utilisera la commande <code>lcrash</code> toujours depuis le même répertoire, sur la machine hôte.
+</p>
+<p>
+Dans la suite du TP, les commandes sont à taper dans les consoles des machines virtuelles <code>alice</code> et <code>bob</code>.
+</p>
+<p>
+Le réseau virtuel proposé modélise de manière simplifiée la situation 
+suivante. Alice et Bob possèdent chacun une machine reliée par un câble 
+Ethernet à une box internet, respectivement <code>alice.blue.net</code> et <code>bob.red.net</code>, qui leur permet de surfer sur le web. De plus, ils disposent d'adresses de courrier électronique, respectivement <code>alice@jmail.com</code> et <code>bob@cold.net</code>,
+ à l'aide desquelles ils souhaitent échanger des messages. Dans ce TP 
+nous allons observer les protocoles applicatifs qui entrent en jeu au 
+cours de ces activités.
+</p>
+<p>
+Pendant tout le TP, n'oubliez pas que vous disposez de la commande <code>man</code> pour obtenir des précisions quand au fonctionnement d'une commande.
+</p>
+
+<h1 id="toc2">1. Réseau local</h1>
+
+<p>
+À l'aide des commandes suivantes, identifier les adresses MAC et IP des 
+deux machines, l'adresse IP du routeur utilisé comme passerelle vers le 
+reste de l'internet ainsi que l'adresse IP des serveurs DNS utilisés. 
+Quel est le rôle de chacun de ces éléments ?
+</p>
+
+<pre># ifconfig eth0
+# route
+# cat /etc/resolv.conf
+</pre>
+
+<p>
+À l'aide des commandes <code>ping</code> et <code>traceroute</code>, 
+vérifier que les machines sont bien reliées au reste du réseau et 
+qu'elles savent atteindre smtp.cold.net ou encore imap.jmail.com.
+</p>
+
+<h1 id="toc3">2. DNS, web et mail</h1>
+
+<p>
+À l'aide du navigateur web <code>lynx</code>, accédez à la page web dont l'URL est <code>http://www.perdu.com</code>.
+</p>
+<p>
+Pour accéder à une URL, le navigateur utilise le DNS pour transformer le nom d'hôte en une adresse IP. À l'aide de la commande <code>dig +short www.perdu.com</code> identifiez l'adresse IP du serveur web qui répond à la requête. Vérifiez que le port <code>http</code> est bien ouvert à l'adresse correspondante à l'aide de l'utilitaire <code>nmap</code>.
+</p>
+<p>
+À l'aide du logiciel de mail <code>pine</code>, vérifiez qu'Alice et Bob peuvent bien échanger des courriers électroniques (leur mot de passe à tous les deux est <code>guest</code>). Dans la configuration de <code>pine</code>, identifiez les paramètres de connexion aux différents serveurs impliqués.
+</p>
+<p>
+Comment le serveur de courrier sait-il à quelle adresse IP livrer le courrier à destination d'un domaine ? Grâce au champ DNS <code>MX</code>. À l'aide de <code>dig -t MX</code>, identifiez les serveurs de réception du courrier pour les domaines <code>jmail.com</code> et <code>cold.net</code>.
+</p>
+
+<h1 id="toc4">3. Écouter le réseau</h1>
+
+<p>
+Observons maintenant en détail les protocoles et échanges qui entrent en
+ jeu lors d'une requête web, de l'envoi d'un courrier électronique et de
+ la consultation d'une boîte au lettre. Votre objectif est de comprendre
+ le fonctionnement de ces protocoles dans des cas élémentaires.
+</p>
+<p>
+Dans un premier temps, reprendre les expériences précédentes depuis la machine <code>alice</code> après avoir placé un sonde sur le réseau local situé entre cette machine et sa box : depuis l'hôte
+</p>
+
+<pre>$ vdump lana | wireshark -i - -k
+</pre>
+
+<p>
+Dans un second temps, recommencer en écoutant cette fois les échanges au cœur du réseau : depuis l'hôte 
+</p>
+
+<pre>$ vdump rezo | wireshark -i - -k
+</pre>
+
+<p>
+<b>Remarque</b> Les serveurs DNS possèdent un cache qui leur permet 
+d'éviter d'effectuer trop souvent les mêmes requêtes. Il peut donc être 
+nécessaire d'arrêter et de relancer le <i>lab</i> afin d'observer l'ensemble des échanges DNS.
+</p>
+
+<h1 id="toc5">4. Communiquer avec les serveurs</h1>
+
+<p>
+Pour vérifier que vous avez bien assimilé les protocole HTTP et SMTP dans des cas simples, utilisez la commande <code>nc</code> pour effectuer des requêtes manuellement.
+</p>
+</div>
+
+<!-- xhtml code generated by txt2tags 2.6. (http://txt2tags.org) -->
+<!-- cmdline: txt2tags tp1.t2t -->
+</div>
+<div id="pied">
+Dernière modification le 18 September 2015
+</div>
+</div>
+
+
+
+</body></html>

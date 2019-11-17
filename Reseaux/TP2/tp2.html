@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr"><head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<title>TP2 — Programmation avec l'API socket</title>
+<style type="text/css" media="all">
+#pied {
+    font-size: 80%;    
+    text-align: right;
+    font-style: italic;
+}
+
+.toc { 
+    font-size: 80%;
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    width: 15em;
+    background-color: #eee;
+    margin: 0px;
+    padding: 0px 
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}      
+
+.toc ul {
+    list-style-type: none;
+    padding: 0em 1em;
+}
+
+.toc ul ul {
+    font-size: 90%;
+}
+
+#tour {
+    display: inline-block;
+    text-align: justify;
+    width: 60em;
+    padding: 2em;
+}
+
+body {
+	font: normal 12pt sans-serif;
+    line-height: 1.3em;
+	text-align: left;
+	margin: 3em;
+	padding: 2em;
+}
+
+#header h2 {
+    font-weight: normal;
+    font-style: italic;
+}
+
+#body h2 {
+    margin-top: 2em;
+    padding-bottom: 0.25em;
+}
+
+
+#body h3 {
+    margin-top: 2em;
+    padding-bottom: 0.25em;
+}
+
+#body h1 {
+    border-bottom: 1px solid black;
+    padding-bottom: 0.25em;
+	margin-top: 2em;
+}
+
+a {
+    color: #ee7700;
+    font-weight: bold;
+	text-decoration: none;
+}
+
+.toc a {
+    color: black;
+}
+
+blockquote {
+	margin-left: 5em;
+	margin-top:2em;
+	font-style:italic;
+}
+
+hr {
+	margin-top:3em;
+}
+
+pre {
+    padding: 1em;
+    background-color: #fce4cc;
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}
+</style>
+<style type="text/css" media="print">
+body {
+    font-size: 10pt
+}
+.toc, #pied {
+    display: none;
+}
+</style>
+</head>
+<body>
+<div id="tour">
+<div id="header">
+<h1>TP2 — Programmation avec l'API socket</h1>
+<h2>L3 réseaux</h2>
+<h3>28 septembre 2015</h3>
+</div>
+<div id="corps">
+<div class="body" id="body">
+<p>
+Ce TP est à réaliser en 3 séances de 2h. La première séance est 
+consacrée à la découverte de l'API socket en Python dans un réseau 
+virtuel Netkit. Les deux séances suivantes sont consacrées au 
+développement de clients et de serveurs pour des protocoles plus 
+sophistiqués en dehors de Netkit dans le langage de votre choix (Ada, C,
+ Python, ...)
+</p>
+
+<h1>1. Première partie : découverte de l'API socket</h1>
+
+<p>
+Le réseau virtuel de ce TP est fourni déjà entièrement configuré sous la forme d'une archive <code>labsock.tar.gz</code>. Une fois l'archive extraite, se placer dans un terminal à l'intérieur du répertoire <code>labsock</code> et démarrer le réseau virtuel à l'aide de la commande <code>lstart</code>. Le <i>lab</i> contient 4 machines du domaine DNS <code>iiia.net</code> : trois clients avec une console nommés <code>pc1</code>, <code>pc2</code> et <code>pc3</code>, ainsi qu'un serveur sans console <code>www</code> alias <code>smtp</code>. 
+</p>
+<p>
+Afin d'observer le trafic réseau, connecter <code>wireshark</code> au réseau <code>rezo</code> à l'aide de la commande hôte suivante.
+</p>
+
+<pre>$ vdump rezo | wireshark -i - -k
+</pre>
+
+<p>
+Le langage utilisé dans ce TP est <a href="http://www.python.org/">Python</a>. Depuis les machines virtuelles on pourra utiliser l'éditeur de texte <code>nano</code> (ou <code>vi</code> pour qui sait s'en servir ou encore <code>mg</code> pour les inconditionnels d'emacs) pour écrire ou modifier des scripts.
+</p>
+<p>
+À l'aide de la commande <code>nmap</code> commencer par étudier les ports ouverts sur chacune des machines. Pendant le TP, la commande <code>lsof -i UDP</code> ou <code>lsof -i TCP</code> permet de connaître les sockets actives.
+</p>
+
+<h2>1.1. Clients/serveurs simples avec UDP</h2>
+
+<h3>Protocole ECHO</h3>
+
+<p>
+Le code source <code>echod.py</code> (dans le répertoire courant sur les machines virtuelles) met en œuvre la version UDP du protocole <a href="http://tools.ietf.org/html/rfc862">echo</a>. Lire la <a href="http://tools.ietf.org/html/rfc862">RFC 862</a> qui définit le protocole, lancer le serveur sur <code>pc1</code> et le tester depuis <code>pc2</code> et <code>pc3</code> à l'aide de <code>nc -v -u pc1 7777</code>. Observer le trafic avec <code>wireshark</code>
+ et étudier le code source et les primitives socket impliquées. Quel est
+ le port usuel utilisé par le protocole ? (consulter le fichier <code>/etc/services</code>)
+</p>
+<p>
+Écrire un client UDP pour <a href="http://tools.ietf.org/html/rfc862">echo</a> qui envoie un message prédéfini et vérifie la réponse reçue. Tester le client.
+</p>
+
+<h3>Protocole DAYTIME</h3>
+
+<p>
+Écrire un client et un serveur UDP pour le protocole <a href="http://tools.ietf.org/html/rfc867">daytime</a> défini dans la <a href="http://tools.ietf.org/html/rfc867">RFC 867</a>. Pour générer la date et l'heure actuelle, on pourra utiliser <code>datetime.now().strftime('%c')</code> après avoir ajouté en tête de programme <code>from datetime import datetime</code>.
+</p>
+
+<h2>1.2. Clients/serveurs simples avec TCP</h2>
+
+<h3>Protocole HTTP</h3>
+
+<p>
+Le code source <code>gethttp.py</code> contient un client HTTP 
+rudimentaire qui affiche la réponse d'un serveur passé en argument à la 
+demande de sa racine. Tester ce script en l'exécutant à l'aide de <code>./gethttp.py www | less</code>. Étudier son code source et les primitives socket impliquées.
+</p>
+
+<h3>Protocole SMTP</h3>
+
+<p>
+Écrire un client SMTP rudimentaire qui envoie un message de bienvenue à 
+l'adresse mail donnée en argument. Le tester sur l'adresse <code>guest@iiia.net</code> dont on trouvera le serveur SMTP en interrogeant le DNS à l'aide de la commande <code>dig</code>.
+</p>
+<p>
+Vérifier que l'utilisateur <code>guest</code> a bien reçu le message en affichant le contenu de sa boîte sur le serveur grâce à la commande suivante (le mot de passe est <code>guest</code>) :
+</p>
+
+<pre>pc1# ssh guest@server.iiia.net cat /var/mail/guest
+</pre>
+
+<h3>Protocole DAYTIME</h3>
+
+<p>
+Écrire un serveur TCP pour le protocole <a href="http://tools.ietf.org/html/rfc867">daytime</a>.
+</p>
+
+<h2>1.3. Multiplexage avec select</h2>
+
+<h3>Protocole de chat</h3>
+
+<p>
+Le code source <code>chatd.py</code> met en œuvre un protocole de salon 
+de discussion rudimentaire qui accepte les connexions multiples. 
+Interagir avec ce serveur à l'aide de la commande <code>nc</code>. Étudier le code source et son utilisation de la primitive de multiplexage <code>select</code>, lire la documentation correspondante.
+</p>
+
+<h3>Proxy TCP</h3>
+
+<p>
+Écrire un proxy TCP <code>proxy.py</code> invoqué avec 3 arguments <code>port rhost rport</code> qui écoute sur le port <code>port</code>, sert de relais vers la machine <code>rhost</code> sur le port <code>rport</code> et affiche les messages échangés sur la console.
+</p>
+
+<h2>1.4. Bonus : et pour quelques dollars de plus</h2>
+
+<p>
+Cette section est là pour occuper les étudiants qui auraient terminé 
+toute la première partie avant la fin des deux premières heures.
+</p>
+<p>
+Avec l'arrivée d'IPv6, les fonctions d'API comme <code>gethostbyname</code> se sont dépréciées au profit de <code>getaddrinfo</code> et <code>getnameinfo</code> : étudiez le fonctionnement de ces fonctions et réécrivez vos scripts pour qu'ils les utilisent.
+</p>
+<p>
+Pour gérer un très grand nombre de connexions, la fonction <code>select</code> est remplacée par d'autres comme <code>epoll</code> ou encore <code>kqueue</code> : pour plus d'informations, lire <a href="http://www.kegel.com/c10k.html">the C10K Problem</a>.
+</p>
+
+<h1>2. Deuxième partie : échange de fichiers</h1>
+
+<p>
+Pour cette deuxième partie, le réseau virtuel Netkit <i>labsock</i> est 
+utilisé uniquement pour expérimenter avec les protocoles, le 
+développement proprement dit est à réaliser sur l'hôte avec les outils 
+de programmation de votre choix. Nous vous conseillons de choisir votre 
+langage parmi Ada, C et Python pour lesquels nous fournissons de la 
+documentation sur Celene.
+</p>
+
+<h2>2.1. File Transfer Protocol</h2>
+
+<p>
+Le protocole <a href="http://tools.ietf.org/html/rfc959">FTP</a> est 
+l'un des plus vieux protocoles de l'internet. Toujours très utilisé, il 
+permet d'échanger des fichiers entre un serveur et des clients. La <a href="http://tools.ietf.org/html/rfc959">RFC 959</a> décrit par le menu ce protocole d'une relative complexité.
+</p>
+<p>
+Écrire un programme capable de se connecter à un serveur FTP et qui 
+permet de naviguer dans l'arborescence du serveur et de télécharger un 
+fichier en mode passif binaire. Pour vous accompagner dans cette tâche 
+vous trouverez sur Celene de la documentation sur l'écriture de 
+client/serveur TCP pour les langages Ada et C. Le reste de cette section
+ vous accompagne dans la découverte du protocole client FTP.
+</p>
+<p>
+Pour observer le protocole FTP, dans le lab Netkit, activer wireshark et utiliser la commande <code>ftp</code> pour récupérer le fichier <code>cake</code> dans le répertoire <code>/home/guest</code> sur le serveur <code>server.iiia.net</code> à l'aide des commandes suivantes :
+</p>
+
+<pre>pc1# ftp server.iiia.net
+Name: guest
+Password: guest
+binary
+passive
+cd /home/guest
+dir
+get cake
+exit
+</pre>
+
+<p>
+Dans wireshark, étudier les échanges TCP et identifier deux connexions 
+liées à ce transfert de fichier FTP. Décrypter les commandes utilisées 
+dans cet échange.
+</p>
+<p>
+Lire la <a href="https://fr.wikipedia.org/wiki/File_Transfer_Protocol">page wikipedia sur FTP</a> pour avoir une vue plus précise du protocole, que vous compléterez au besoin par la consultation de la <a href="http://tools.ietf.org/html/rfc959">RFC 959</a>.
+</p>
+<p>
+Une fois votre client écrit, tester qu'il fonctionne en récupérant sur le serveur <code>ftp.lip6.fr</code> le fichier <code>rfc99.txt</code> du répertoire <code>/pub/rfc/rfc/</code> pour l'utilisateur <code>ftp</code> de mot de passe <code>guest@</code>.
+</p>
+
+<h2>2.2. Trivial File Transfer Protocol</h2>
+
+<p>
+Le protocole <a href="http://tools.ietf.org/html/rfc1350">TFTP</a> est, 
+comme son nom l'indique, un protocole d'échange de fichier très 
+rudimentaire, principalement utilisé pour le transfert de fichier lors 
+d'un démarrage de machine à travers le réseau (utilisé en complément du 
+protocole BOOTP). La <a href="http://tools.ietf.org/html/rfc1350">RFC 1350</a> décrit par le menu ce protocole relativement simple.
+</p>
+<p>
+Écrire un serveur TFTP qui permet de lire et d'écrire des fichiers dans 
+le répertoire courant du serveur en mode octet.  Pour vous accompagner 
+dans cette tâche vous trouverez sur Celene de la documentation sur 
+l'écriture de client/serveur UDP pour les langages Ada et C. Le reste de
+ cette section vous accompagne dans la découverte du protocole TFTP.
+</p>
+<p>
+Pour observer le protocole FTP, dans le lab Netkit, activer wireshark et utiliser la commande <code>tftp</code> pour récupérer le fichier <code>cake</code> dans le répertoire <code>/srv/tftp</code> sur le serveur <code>server.iiia.net</code> à l'aide des commandes suivantes :
+</p>
+
+<pre>pc1# tftp server.iiia.net
+binary
+verbose
+trace
+get cake
+put cake
+quit
+</pre>
+
+<p>
+Lire la <a href="https://en.wikipedia.org/wiki/Trivial_File_Transfer_Protocol">page wikipedia anglaise sur TFTP</a> pour avoir une vue plus précise du protocole, que vous compléterez au besoin par la consultation de la <a href="http://tools.ietf.org/html/rfc1350">RFC 1350</a>.
+</p>
+<p>
+Tester votre serveur avec le client <code>tftp</code> (l'installer si besoin en tant que <code>root</code> avec <code>apt-get install tftp</code>).
+</p>
+
+<h2>2.3. Bonus : et pour quelques dollars de plus</h2>
+
+<p>
+Cette section est là pour occuper les étudiants qui auraient terminé 
+toute la deuxième partie avant la fin des quatre dernières heures.
+</p>
+<p>
+Écrire un serveur FTP qui permette de lire et d'écrire des fichiers dans
+ le répertoire courant et ses sous-répertoires en mode passif binaire. 
+La mise en œuvre devra être assez robuste pour que le client classique 
+en ligne de commande <code>ftp</code> fonctionne avec votre serveur.
+</p>
+
+<h1>Références</h1>
+
+<ul>
+<li><a href="http://www.stavros.io/tutorials/python/">Python in 10 minutes</a>
+</li>
+<li><a href="http://docs.python.org/release/2.5/lib/module-socket.html">module socket</a>
+</li>
+<li><a href="http://docs.python.org/release/2.5/lib/module-select.html">module select</a>
+</li>
+</ul>
+
+</div>
+<!-- xhtml code generated by txt2tags 2.6. (http://txt2tags.org) -->
+<!-- cmdline: txt2tags tp2.t2t -->
+</div>
+<div id="pied">
+Dernière modification le 27 September 2015
+</div>
+</div>
+
+
+
+</body></html>

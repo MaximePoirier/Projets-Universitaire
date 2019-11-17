@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr"><head>
+<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+<title>TP5 — Routage dynamique avec Netkit</title>
+<style type="text/css" media="all">
+#pied {
+    font-size: 80%;    
+    text-align: right;
+    font-style: italic;
+}
+
+.toc { 
+    font-size: 80%;
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    width: 15em;
+    background-color: #eee;
+    margin: 0px;
+    padding: 0px 
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}      
+
+.toc ul {
+    list-style-type: none;
+    padding: 0em 1em;
+}
+
+.toc ul ul {
+    font-size: 90%;
+}
+
+#tour {
+    display: inline-block;
+    text-align: justify;
+    width: 60em;
+    padding: 2em;
+}
+
+body {
+	font: normal 12pt sans-serif;
+    line-height: 1.3em;
+	text-align: left;
+	margin: 3em;
+	padding: 2em;
+}
+
+#header h2 {
+    font-weight: normal;
+    font-style: italic;
+}
+
+#body h2 {
+    margin-top: 2em;
+    padding-bottom: 0.25em;
+}
+
+
+#body h3 {
+    margin-top: 2em;
+    padding-bottom: 0.25em;
+}
+
+#body h1 {
+    border-bottom: 1px solid black;
+    padding-bottom: 0.25em;
+	margin-top: 2em;
+}
+
+a {
+    color: #ee7700;
+    font-weight: bold;
+	text-decoration: none;
+}
+
+.toc a {
+    color: black;
+}
+
+blockquote {
+	margin-left: 5em;
+	margin-top:2em;
+	font-style:italic;
+}
+
+hr {
+	margin-top:3em;
+}
+
+pre {
+    padding: 1em;
+    background-color: #fce4cc;
+    -moz-border-radius: 0.6em;
+    border-radius: 0.6em;
+}
+</style>
+<style type="text/css" media="print">
+body {
+    font-size: 10pt
+}
+.toc, #pied {
+    display: none;
+}
+</style>
+</head>
+<body>
+<div id="tour">
+<div id="header">
+<h1>TP5 — Routage dynamique avec Netkit</h1>
+<h2>L3 réseaux</h2>
+<h3>9 novembre 2015</h3>
+</div>
+<div id="corps">
+<div class="body" id="body">
+
+<h1>1. Le démon de routage Quagga</h1>
+
+<p>
+Le <i>lab</i> <code>lab3</code>, à télécharger sur la <a href="http://celene.univ-orleans.fr/course/view.php?id=1980">page Celene du cours</a>, déploie un réseau virtuel dans l'esprit du <code>lab2</code> à la différence que les machines <code>alice</code>, <code>bob</code> et <code>charlie</code> sont déjà configurées statiquement ainsi qu'une patte de chacun des routeurs <code>rtA</code>,  <code>rtB</code> et <code>rtC</code>. De plus, un serveur SSH et la suite de routage Quagga sont configurés sur chacun des trois routeurs.
+</p>
+<p>
+▶︎ <i>Étudiez le lab et dessinez un plan d'adressage de ce réseau avant de le démarrer avec <code>lstart</code>. Testez la connectivité entre <code>alice</code> et <code>rtA</code>, <code>bob</code> et <code>rtB</code>, <code>charlie</code> et <code>rtC</code>. Enfin, à l'aide de la commande <code>nmap</code>, étudiez les ports ouverts sur <code>rtA</code>, <code>rtB</code> et <code>rtC</code>.</i>
+</p>
+<p>
+Les démons Quagga suivant sont déployés avec leur interface <code>telnet</code> sur chacun des routeurs, mais ils ne sont pas configurés : <code>zebra</code>, <code>ripd</code>et <code>ospfd</code>.
+</p>
+<p>
+▶︎ <i>Parcourez la documentation de Quagga à l'aide de la commande</i>
+</p>
+
+<pre>$ info -f /share/info/quagga.info
+</pre>
+
+<p>
+Pour une vue synthétique des Quagga et des ses commandes, on pourra aussi consulter la <a href="http://wiki.netkit.org/netkit-labs/netkit-labs_basic-topics/netkit-lab_quagga/netkit-lab_quagga.pdf">documentation du lab officiel</a>.
+</p>
+<p>
+▶︎ <i>Connectez chacun des postes de travail à son routeur, sur le port <code>zebra</code>, à l'aide de la commande <code>telnet` (le mot de passe est ``zebra</code>).</i>
+</p>
+
+<pre>alice# telnet rtA0 zebra
+bob# telnet rtB0 zebra
+charlie# telnet rtC0 zebra
+</pre>
+
+<p>
+▶︎ <i>Visionnez l'ensemble des commandes disponibles à l'aide des commandes <code>help</code>, <code>list</code> et <code>?</code>.</i>
+</p>
+
+<pre>Router&gt; help
+Router&gt; show ?
+Router&gt; list
+</pre>
+
+<p>
+▶︎ <i>Affichez la configuration des interfaces réseau et la table de routage des routeurs à l'aide de <code>show</code>.</i>
+</p>
+
+<pre>Router&gt; show interface
+Router&gt; show ip route
+</pre>
+
+<p>
+▶︎ <i>À l'aide des commandes <code>enable</code> puis <code>configure terminal</code>, passez en mode édition de configuration, en prenant le temps à chaque fois d'afficher les commandes disponibles.</i>
+</p>
+
+<pre>Router&gt; enable
+Router# configure terminal
+Router(config)# hostname rtA
+</pre>
+
+<p>
+▶︎ <i>Configurez les interfaces <code>eth1</code> et <code>eth2</code> de manière consistante (s'inspirer du TP4) à l'aide des commandes <code>interface</code> et <code>ip address</code> puis sauvegardez la configuration à l'aide de <code>write</code>.</i>
+</p>
+<p>
+La configuration est sauvegardée dans le fichier <code>/etc/quagga/zebra.conf</code> sur le routeur. Pour le sauvegarder dans le lab, on peut utiliser la commande <code>ssh</code> pour se connecter au routeur et recopier le fichier dans <code>/hostlab</code> (le mot de passe de <code>root</code> est <code>root</code>) :
+</p>
+
+<pre>rtA(config)# write
+rtA(config)# quit
+rtA# quit
+alice# ssh rtA0 cp /etc/quagga/zebra.conf /hostlab/rtA/etc/quagga/
+</pre>
+
+<p>
+▶︎ <i>Sauvegardez la configuration de chacun de vos routeurs et créez 
+une archive de votre lab ainsi configuré sans oublier de mettre à jour <code>shared/etc/hosts</code>
+ avec les pattes manquantes des routeurs. Il faudra repartir de cette 
+archive pour chaque section suivante de la fiche ! Arrêtez le lab avec <code>lcrash</code>.</i>
+</p>
+
+<h1>2. Routage statique</h1>
+
+<p>
+▶︎ <i>Démarrez le lab depuis l'archive avec <code>lstart</code> puis lancez le script <code>ecoute</code> pour disposer de sondes dans chacun des 6 réseaux.</i>
+</p>
+<p>
+▶︎ <i>À l'aide de la commande <code>ip route</code>, configurez statiquement chaque routeur.</i>
+</p>
+<p>
+▶︎ <i>Vérifiez que chaque routeur peut bien joindre les autres à l'aide de <code>ping</code> puis étudiez les routes empruntées grâce à <code>traceroute</code>. Sur les routeurs, affichez les tables de routage à l'aide de <code>show ip route</code>. Observez le trafic entre routeurs à l'aide de Wireshark.</i>
+</p>
+<p>
+▶︎ <i>Depuis <code>bob</code>, coupez la liaison la plus directe vers <code>alice</code> grâce à <code>ssh</code> :</i>
+</p>
+
+<pre>bob# ssh rtB0 ifconfig eth1 down
+</pre>
+
+<p>
+▶︎ <i>Modifiez la configuration des routeurs pour que <code>bob</code> puisse joindre <code>alice</code> en passant par l'autre route.</i>
+</p>
+<p>
+Le routage dynamique va nous permettre de faire cela automatiquement !
+</p>
+
+<h1>3. Routage dynamique avec RIP</h1>
+
+<p>
+▶︎ <i>Démarrez le lab depuis l'archive avec <code>lstart</code> puis lancez le script <code>ecoute</code> pour disposer de sondes dans chacun des 6 réseaux.</i>
+</p>
+<p>
+▶︎ <i>Connectez chacune des machines à son routeur, à l'aide de <code>telnet</code>, sur le port <code>ripd</code>.</i>
+</p>
+
+<pre>alice# telnet rtA0 ripd
+ripd&gt; enable
+ripd# conf t
+ripd(config)# hostname rtA
+</pre>
+
+<p>
+▶︎ <i>Activez le routage RIP à l'aide de la commande <code>router rip</code>.</i>
+</p>
+<p>
+▶︎ <i>Configurez chaque routeur à l'aide de la commande <code>redistribute</code> afin qu'il redistribue à ses voisins les réseaux auxquels il est connecté directement.</i>
+</p>
+<p>
+▶︎ <i>Configurez chaque routeur à l'aide de la commande <code>network</code> afin qu'il utilise les réseaux nommés <code>ab</code>, <code>ac</code> et <code>bc</code> dans <code>lab.conf</code> pour échanger des informations de routage.</i>
+</p>
+<p>
+▶︎ <i>Analysez les paquets échangés par les routeurs. Testez la connectivité et les routes choisies à l'aides de <code>ping</code> et <code>traceroute</code>.</i>
+</p>
+<p>
+▶︎ <i>Depuis <code>bob</code>, coupez la liaison la plus directe vers <code>alice</code> grâce à <code>ssh rtB0 ifconfig eth1 down</code>. Observez comment le réseau découvre l'autre route disponible et rétabli la communication.</i>
+</p>
+
+<h1>4. Routage dynamique avec OSPF</h1>
+
+<p>
+▶︎ <i>Démarrez le lab depuis l'archive avec <code>lstart</code> puis lancez le script <code>ecoute</code> pour disposer de sondes dans chacun des 6 réseaux.</i>
+</p>
+<p>
+▶︎ <i>Recommencez l'expérience précédente en utilisant le démon <code>ospfd</code> au lieu de <code>ripd</code>. On se contentera d'un réseau OSPF à zone unique en ajoutant derrière chaque commande <code>network</code> le suffixe <code>area 0</code>.</i>
+</p>
+
+<h1>5. Retour sur le TP1</h1>
+
+<p>
+▶︎ <i>Reprenez le TP1 et analysez le contenu du lab, sa topologie, les 
+services configurés sur chacune des machines. Lire les fichiers de 
+configuration et les pages de manuel correspondantes pour expliquer 
+complètement le fonctionnement de ce réseau.</i>
+</p>
+</div>
+
+<!-- xhtml code generated by txt2tags 2.6. (http://txt2tags.org) -->
+<!-- cmdline: txt2tags tp5.t2t -->
+</div>
+<div id="pied">
+Dernière modification le 14 November 2015
+</div>
+</div>
+
+
+
+</body></html>

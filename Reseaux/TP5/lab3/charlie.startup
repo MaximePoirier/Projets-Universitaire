@@ -1,0 +1,2 @@
+ifconfig eth0 inet 192.168.132.42/23
+route add default gw 192.168.132.1
