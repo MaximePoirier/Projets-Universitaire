@@ -1,0 +1,21 @@
+[
+  {
+    "id": 0,
+    "question": "Qui qui ?",
+    "reponses": [
+      "A",
+      "B",
+      "C"
+    ],
+    "votes": []
+  },
+  {
+    "id": 1,
+    "question": "Quoi ?",
+    "reponses": [
+      "Z",
+      "X"
+    ],
+    "votes": []
+  }
+]

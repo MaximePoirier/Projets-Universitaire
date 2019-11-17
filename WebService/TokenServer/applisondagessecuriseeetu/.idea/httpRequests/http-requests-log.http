@@ -1,0 +1,117 @@
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmVkIiwicm9sZXMiOlsidXNlciIsImFkbWluIiwic3VwZXJzdXBlcmFkbWluIl0sImV4cCI6MTU1MzE4ODU5Nn0.rkr7Q93kd9pJQcvy-plPlpnC9izLpbPtGhvXb4WgIsPETz7vtyLT-nrWm24EwKNw-dOAYbnKlxy8bOKSpX6L-A
+
+<> 2019-03-21T051721.200.json
+
+###
+
+POST http://localhost:8000/login?login=fred&password=abcd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-21T051636.202.txt
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmVkIiwicm9sZXMiOlsidXNlciIsImFkbWluIiwic3VwZXJzdXBlcmFkbWluIl0sImV4cCI6MTU1MjY0NjI1MX0.BBNxtHjbeOKVnM18MCrqAhyGCqksXTiaqIfQQJPnXqANfaZuhUaYeEq8m-BERHGoFINIIcs79f-UsxFt7Zgbiw
+
+<> 2019-03-21T051522.401.html
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmVkIiwicm9sZXMiOlsidXNlciIsImFkbWluIiwic3VwZXJzdXBlcmFkbWluIl0sImV4cCI6MTU1MjY0NjI1MX0.BBNxtHjbeOKVnM18MCrqAhyGCqksXTiaqIfQQJPnXqANfaZuhUaYeEq8m-BERHGoFINIIcs79f-UsxFt7Zgbiw
+
+<> 2019-03-15T110433.200.json
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T110359.401.html
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T110059.401.html
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T105436.500.html
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T104538.500.html
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmVkIiwicm9sZXMiOlsidXNlciIsImFkbWluIiwic3VwZXJzdXBlcmFkbWluIl0sImV4cCI6MTU1MjY0NjI1MX0.BBNxtHjbeOKVnM18MCrqAhyGCqksXTiaqIfQQJPnXqANfaZuhUaYeEq8m-BERHGoFINIIcs79f-UsxFt7Zgbiw
+
+<> 2019-03-15T104525.200.json
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T104324.500.html
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T104230.500.html
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmVkIiwicm9sZXMiOlsidXNlciIsImFkbWluIiwic3VwZXJzdXBlcmFkbWluIl0sImV4cCI6MTU1MjY0NjI1MX0.BBNxtHjbeOKVnM18MCrqAhyGCqksXTiaqIfQQJPnXqANfaZuhUaYeEq8m-BERHGoFINIIcs79f-UsxFt7Zgbiw
+
+<> 2019-03-15T104205.200.json
+
+###
+
+GET http://localhost:8080/sondages
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T104129.500.html
+
+###
+
+GET http://localhost:8080/sondage
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T104053.404.html
+
+###
+

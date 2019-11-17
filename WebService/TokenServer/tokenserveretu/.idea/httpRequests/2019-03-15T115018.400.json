@@ -1,0 +1,8 @@
+{
+  "timestamp": 1552647018413,
+  "status": 400,
+  "error": "Bad Request",
+  "exception": "org.springframework.web.bind.MissingServletRequestParameterException",
+  "message": "Required String parameter 'login' is not present",
+  "path": "/login"
+}

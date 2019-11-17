@@ -1,0 +1,106 @@
+POST http://localhost:8000/login?login=fred&password=abcd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-21T014443.202.txt
+
+###
+
+POST http://localhost:8000/login?login=fred&password=abcd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T115046.202.txt
+
+###
+
+POST http://localhost:8000/login?fred=abcd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T115018.400.json
+
+###
+
+GET http://localhost:8000/checkToken
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmVkIiwicm9sZXMiOlsidXNlciIsImFkbWluIiwic3VwZXJzdXBlcmFkbWluIl0sImV4cCI6MTU1MjY0OTEwMH0.Eq2TiDIfujnb0_vX32Z99oA_PuszymVcoamUAF8u-GRsCS9k05XeLkxwktovjLHha2fT97ZqjWmmrV6fmFS7-Q
+
+<> 2019-03-15T112614.202.txt
+
+###
+
+GET http://localhost:8000/checkToken
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmcmVkIiwicm9sZXMiOlsidXNlciIsImFkbWluIiwic3VwZXJzdXBlcmFkbWluIl0sImV4cCI6MTU1MjY0NjI1MX0.BBNxtHjbeOKVnM18MCrqAhyGCqksXTiaqIfQQJPnXqANfaZuhUaYeEq8m-BERHGoFINIIcs79f-UsxFt7Zgbiw
+
+<> 2019-03-15T103808.202.txt
+
+###
+
+POST http://localhost:8000/login?login=fred&password=abcd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-15T103731.202.txt
+
+###
+
+GET http://localhost:8000/checkToken
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5byIsInJvbGVzIjpbInVzZXIiLCJzY3J1bW1hc3RlciJdLCJleHAiOjE1NTE5MTA1MDB9.qhzwebH9MyUDvgK3kycifcKXlSloAD7NHMZwjzyCrCDjxYvko0hUKssvrH_P46eUWGBJUn3ju-DVeZt0KLOWfw
+
+<> 2019-03-15T103631.401.txt
+
+###
+
+GET http://localhost:8000/checkToken
+Accept: */*
+Cache-Control: no-cache
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5byIsInJvbGVzIjpbInVzZXIiLCJzY3J1bW1hc3RlciJdLCJleHAiOjE1NTE5MTA1MDB9.qhzwebH9MyUDvgK3kycifcKXlSloAD7NHMZwjzyCrCDjxYvko0hUKssvrH_P46eUWGBJUn3ju-DVeZt0KLOWfw
+
+<> 2019-03-06T101631.202.txt
+
+###
+
+POST http://localhost:8000/login?login=yo&password=yo
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-06T101500.202.txt
+
+###
+
+POST http://localhost:8000/login?login=yo&password=yo
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-06T100807.400.txt
+
+###
+
+POST http://localhost:8000/login?login=fred&password=abcd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-06T100745.400.txt
+
+###
+
+POST http://localhost:8000/login?login=fred&password=abcd
+Accept: */*
+Cache-Control: no-cache
+
+<> 2019-03-06T100714.400.txt
+
+###
+
+POST http://localhost:8080/login?login=fred&password=abcd
+Accept: */*
+Cache-Control: no-cache
+
+###
+
