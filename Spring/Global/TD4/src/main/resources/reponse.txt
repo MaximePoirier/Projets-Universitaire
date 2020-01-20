@@ -1,0 +1,21 @@
+
+
+
+1) La classe WebServletConfiguration remplace le fichier web.xml, en implémentant l'interface WebApplicationInitializer qui est reconnu pas Spring.
+
+2) Pour mettre le login de l'utilisateur connecté en session il suffit de rajouter l'annotation @SessionAttributes("courant") dans le controller, puis une fois le login de l'utilisateur connu: model.addAttribute("courant", userV.getLogin()); .
+
+3) Les annotations indispensables sont @Entity et @Id sur l'attribut représentant la clef .
+
+4) Pour accéder à la base de donnée on utilise un entity manager.
+
+5) On utilise l'entity manager dans un service qui serra lui même injecter dans le controller. Pour créer une requête on utilise la méthode createQuery().
+
+6) Le paramétrage de la data Source est faite dans la class ClientWebConfig.
+
+7) Un dto est une "sous-class" intermédiaire que l'on fait transiter entre le serveur et le client et qui permet de ne pas faire transiter tous les champs d'une class.
+
+8) Il permet d'insérer dans la base de donnée un utilisateur lors de la création de celle-ci.
+
+9) C'est l'objet qui va nous permettre d'intéragir avec la base de donnée en mode transactionnel.
+ 
